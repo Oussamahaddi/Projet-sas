@@ -11,6 +11,7 @@ typedef struct {
     char nom[50];
     int quantite_Produit;
     int prix;
+    float TTC;
 }Produit; 
 
 void design(){
@@ -33,14 +34,17 @@ void list_de_choix() {
     printf("\n--- 6 --- Quitter le programme. \n");
 }
 
-void print_product(Produit P[], int i) {
+int i, j;
+int n = 0;
+int nombre_produit;
+
+void print_product(Produit P[]) {
     printf("\nCode de produit : %d \n", P[i].code_Product);
     printf("Nom de produit : %s \n", &P[i].nom);
     printf("Quantite de produit : %d \n", P[i].quantite_Produit);
     printf("Prix de produit : %d \n", P[i].prix);
 }
 
-int n = 0;
 
 void ajouter_un_product(Produit P[]) {
     printf("Code de produit : ");
@@ -54,7 +58,7 @@ void ajouter_un_product(Produit P[]) {
     n++;
 }
 
-void ajouter_plusieur_product(Produit P[], int nombre_produit) {
+void ajouter_plusieur_product(Produit P[]) {
     printf("* Combien des produits tu veux ajouter : ");
     scanf("%d", &nombre_produit);
     for (int i = n; i < n + nombre_produit; i++) {
@@ -71,10 +75,56 @@ void ajouter_plusieur_product(Produit P[], int nombre_produit) {
     n+=nombre_produit;
 }
 
-void lister_Produits() {
+void lister_Produits(Produit P[]) {
     // nom,prix,prix ttc    || prix ttc = prix * 15%
     // ordrer alpha
     // ordre decroissant de prix
+    int lister;
+    Produit swap;
+
+    printf("\n* Choisir la methode de triage \n");
+    printf("- 1 - Lister les produit en Ordre Alphabetique croissant \n");
+    printf("- 2 - Lister les produit en Ordre Decroissant de prix \n");
+    printf("* Choisir : ");
+    scanf("%d", &lister);
+    
+    switch (lister) {
+        case 1 :
+            for (i = 1; i < n + nombre_produit; i++) {
+                if (strcmp(P[j - 1].nom,P[j].nom) < 0) {
+                    swap = P[j];
+                    P[j] = P[j - 1];
+                    P[j - 1] = swap;
+                    j--;
+                } else if (strcmp(P[j - 1].nom,P[j].nom) == 0) {}
+            }
+            for (i = 0; i < n + nombre_produit; i++) {
+                P[i].TTC = P[i].prix + 0.15;
+                printf("Nom de produit : %s \n", &P[i].nom);
+                printf("Prix de produit : %d \n", P[i].prix);
+                printf("Prix TTC de produit : %d \n", P[i].TTC);
+                printf("\n");
+            }
+            break;
+        case 2 :
+            for (i = 1; i < n + nombre_produit; i++) {
+                j = i;
+                while (j > 0 && P[j - 1].prix < P[j].prix) {
+                    swap = P[j];
+                    P[j] = P[j - 1];
+                    P[j - 1] = swap;
+                    j--;
+                }
+            }
+            for (i = 0; i < n + nombre_produit; i++) {
+                P[i].TTC = P[i].prix + 0.15;
+                printf("Nom de produit : %s \n", &P[i].nom);
+                printf("Prix de produit : %d \n", P[i].prix);
+                printf("Prix TTC de produit : %d \n", P[i].TTC);
+                printf("\n");
+            }
+            break;
+    }
 }
 
 void acheter_Produit() {
@@ -100,7 +150,7 @@ void recherche_produit(int code, int quantite, Produit P[]) {
                 scanf("%d", &code);
                 for (i = 0; i < n + nombre_produit; i++) {
                     if (code == P[i].code_Product) {
-                        print_product(P, i);
+                        print_product(P);
                         break;
                     }
                 }
@@ -110,7 +160,7 @@ void recherche_produit(int code, int quantite, Produit P[]) {
                 scanf("%d", &quantite);
                 for (i = 0; i < n + nombre_produit; i++) {
                     if (quantite == &P[i].quantite_Produit) {
-                        print_product(P, i);
+                        print_product(P);
                         break;
                     }
                 }
@@ -128,7 +178,7 @@ int main() {
 
     int operation;
     int quantite;
-    int nombre_produit;
+    //int nombre_produit;
     int product_Rechercher;
     int code;
     int quitter;
@@ -146,10 +196,10 @@ int main() {
                 ajouter_un_product(P);
                 break;
             case 2 :
-                ajouter_plusieur_product(P, nombre_produit);
+                ajouter_plusieur_product(P);
                 break;
             case 3 :
-                lister_Produits();
+                lister_Produits(P);
                 break;
             case 4 :
                 acheter_Produit();

@@ -12,39 +12,40 @@ typedef struct {
     char nom[50];
     int quantite_Produit;
     float prix;
+    float TTC;
 }Produit; 
 
 void design(){
-    printf("*****************************************************************\n");
-    printf("*     ****      *                                *     ****     *\n");
-    printf("*     ****      *                                *     ****     *\n");
-    printf("*****************     GESTION  DE  PHARMACIE     ****************\n");
-    printf("*****************     GESTION  DE  PHARMACIE     ****************\n");
-    printf("*     ****      *                                *     ****     *\n");
-    printf("*     ****      *                                *     ****     *\n");
-    printf("*****************************************************************\n");
+    printf("\t\t\t*****************************************************************\n");
+    printf("\t\t\t*     ****      *                                *     ****     *\n");
+    printf("\t\t\t*     ****      *                                *     ****     *\n");
+    printf("\t\t\t*****************     GESTION  DE  PHARMACIE     ****************\n");
+    printf("\t\t\t*****************     GESTION  DE  PHARMACIE     ****************\n");
+    printf("\t\t\t*     ****      *                                *     ****     *\n");
+    printf("\t\t\t*     ****      *                                *     ****     *\n");
+    printf("\t\t\t*****************************************************************\n");
 }
 
 void list_de_choix() {
-    printf("*--- 1 --- Ajouter un nouveau produit.                          *\n");
-    printf("*                                                               *\n");
-    printf("*--- 2 --- Ajouter plusieur nouveaux produits.                  *\n");
-    printf("*                                                               *\n");
-    printf("*--- 3 --- Lister tous les produits.                            *\n");
-    printf("*                                                               *\n");
-    printf("*--- 4 --- Acheter un produit.                                  *\n");
-    printf("*                                                               *\n");
-    printf("*--- 5 --- Recherche un produit.                                *\n");
-    printf("*                                                               *\n");
-    printf("*--- 6 --- Quitter le programme.                                *\n");
-    printf("*****************************************************************\n\n");
+    printf("\t\t\t*--- 1 --- Ajouter un nouveau produit.                          *\n");
+    printf("\t\t\t*                                                               *\n");
+    printf("\t\t\t*--- 2 --- Ajouter plusieur nouveaux produits.                  *\n");
+    printf("\t\t\t*                                                               *\n");
+    printf("\t\t\t*--- 3 --- Lister tous les produits.                            *\n");
+    printf("\t\t\t*                                                               *\n");
+    printf("\t\t\t*--- 4 --- Acheter un produit.                                  *\n");
+    printf("\t\t\t*                                                               *\n");
+    printf("\t\t\t*--- 5 --- Recherche un produit.                                *\n");
+    printf("\t\t\t*                                                               *\n");
+    printf("\t\t\t*--- 6 --- Quitter le programme.                                *\n");
+    printf("\t\t\t*****************************************************************\n\n");
 }
 
 int i, j;
 int n = 0;
 int quantite;
 int code;
-Produit P[100];
+Produit P[1000];
 
 void affiche_product() {
     printf("\nCode de produit : %d \n", P[i].code_Product);
@@ -52,7 +53,6 @@ void affiche_product() {
     printf("Quantite de produit : %d \n", P[i].quantite_Produit);
     printf("Prix de produit : %.2f \n", P[i].prix);
 }
-
 
 void ajouter_un_product() {
     printf("- Code de produit :");
@@ -63,7 +63,8 @@ void ajouter_un_product() {
     scanf("%d", &P[n].quantite_Produit);
     printf("- Prix de produit : ");
     scanf("%f", &P[n].prix);
-    printf("--> Le produit %s a ete ajouter \n", P[n].nom);
+    // P[i].TTC = P[i].prix + 0.15;
+    printf("--> Le produit %s a ete ajouter \n\n", P[n].nom);
     n++;
 }
 
@@ -82,7 +83,8 @@ void ajouter_plusieur_product() {
         scanf("%d", &P[i].quantite_Produit);
         printf("- Prix de produit : ");
         scanf("%f", &P[i].prix);
-        printf("--> Le produit %s a ete ajouter \n", P[n].nom);
+        // P[i].TTC = P[i].prix + 0.15;
+        printf("--> Le produit %s a ete ajouter \n\n", P[n].nom);
     }
     n+=nombre_produit;
 }
@@ -92,34 +94,34 @@ void lister_Produits() {
     Produit swap;
 
     printf("\n* Choisir la methode de triage \n");
-    printf("- 1 - Lister les produit en Ordre Alphabetique croissant \n");
-    printf("- 2 - Lister les produit en Ordre Decroissant de prix \n");
+    printf("- 1 - Lister par Ordre Alphabetique croissant \n");
+    printf("- 2 - Lister par Ordre Decroissant de prix \n");
     printf("* Choisir : ");
     scanf("%d", &lister);
     
     switch (lister) {
-        float ttc;
         case 1 :
-            for (i = 1; i < n; i++) {
-                if (strcmp(P[j - 1].nom,P[j].nom) < 0) {
-                    swap = P[j];
-                    P[j] = P[j - 1];
-                    P[j - 1] = swap;
-                    j--;
-                } else if (strcmp(P[j - 1].nom,P[j].nom) == 0) {}
+            for (i = 0; i < n; i++) {   // trier par ordre croissant alphabitique utilisont tri par insertion
+                for (j = 1; j < n; j++) {
+                    if (strcmp(P[i].nom,P[j].nom) > 0) {
+                        swap = P[i];
+                        P[i] = P[j];
+                        P[j] = swap;
+                    }
+                }
             }
             for (i = 0; i < n; i++) {
+                P[i].TTC = P[i].prix + (P[i].prix * 15 / 100);
                 printf("Nom de produit : %s \n", P[i].nom);
-                printf("Prix de produit : %d \n", P[i].prix);
-                P[i].prix = P[i].prix + 0.15;
-                printf("Prix TTC de produit : %.2f \n", P[i].prix);
+                printf("Prix de produit : %.2f \n", P[i].prix);
+                printf("Prix TTC de produit : %.2f \n", P[i].TTC);
                 printf("\n");
             }
             break;
         case 2 :
-            for (i = 1; i < n; i++) {
+            for (i = 1; i < n; i++) {       // trier par ordre decroissant utilisont methode tri par insertion
                 j = i;
-                while (j > 0 && P[j - 1].prix < P[j].prix) {
+                while (j > 0 && P[j - 1].prix > P[j].prix) {
                     swap = P[j];
                     P[j] = P[j - 1];
                     P[j - 1] = swap;
@@ -127,11 +129,10 @@ void lister_Produits() {
                 }
             }
             for (i = 0; i < n; i++) {
-                
+                P[i].TTC = P[i].prix + (P[i].prix * 15 / 100);
                 printf("Nom de produit : %s \n", P[i].nom);
-                printf("Prix de produit : %d \n", P[i].prix);
-                P[i].prix = P[i].prix + 0.15;
-                printf("Prix TTC de produit : %d \n", P[i].prix);
+                printf("Prix de produit : %.2f \n", P[i].prix);
+                printf("Prix TTC de produit : %.2f \n", P[i].TTC);
                 printf("\n");
             }
             break;
@@ -139,7 +140,23 @@ void lister_Produits() {
 }
 
 void acheter_Produit() {
-
+    printf("Entrer le code de produit que tu veux acheter : ");
+    scanf("%d", &code);
+    printf("Entrer la quantite que tu besoin : ");
+    scanf("%d", &quantite);
+    for (i = 0; i < n; i++) {
+        if (code == P[i].code_Product) {
+            if (quantite > P[i].quantite_Produit) {
+                printf("Desole il rest que %d sur ce produit \n", P[i].quantite_Produit);
+            } else if (P[i].quantite_Produit == 0) {
+                printf("Sorry the quantite of this produit est epuise \n");
+            } else {
+                P[i].quantite_Produit = P[i].quantite_Produit - quantite;
+                printf("\n --> La Quantite de produit a ete bien mise a jour !!!! \n\n");
+            }
+            break;
+        }
+    }
 }
 
 void recherche_produit() {
@@ -152,34 +169,30 @@ void recherche_produit() {
     printf("* Choisir : ");
     scanf("%d", &methode_de_Recherche);
 
-    do {
-        switch (methode_de_Recherche) {
-            case 1 :
-                printf("\n* Entrer le code de produit que tu recherche : ");
-                scanf("%d", &code);
-                for (i = 0; i < n; i++) {
-                    if (code == P[i].code_Product) {
-                        affiche_product();
-                        break;
-                    }
+    switch (methode_de_Recherche) {
+        case 1 :
+            printf("\n* Entrer le code de produit que tu recherche : ");
+            scanf("%d", &code);
+            for (i = 0; i < n; i++) {
+                if (code == P[i].code_Product) {
+                    affiche_product();
+                    break;
                 }
-                break;
-            case 2 :
-                printf("\n* Entrer la Quantite de produit que tu recherche : ");
-                scanf("%d", &quantite);
-                for (i = 0; i < n; i++) {
-                    if (quantite == P[i].quantite_Produit) {
-                        affiche_product();
-                        break;
-                    }
-                }
-                break;
-            default :
-                printf("Y a pas ce choix dans list \n");
-                break;
-        }
-system("cls");
-    } while (methode_de_Recherche > 0 || methode_de_Recherche < 3);
+            }
+            break;
+        case 2 :
+            printf("\n* Entrer la Quantite de produit que tu recherche : ");
+            scanf("%d", &quantite);
+            for (i = 0; i < n; i++) {
+                if (quantite == P[i].quantite_Produit) 
+                    affiche_product();
+            }
+            break;
+        default :
+            printf("Y a pas ce choix dans list \n");
+            break;
+    }
+    printf("\n");
 }
 
 int main() {
@@ -208,7 +221,7 @@ int main() {
                 acheter_Produit();
                 break;
             case 5 :
-                recherche_produit(code, quantite);
+                recherche_produit();
                 break;
         }
 
@@ -216,7 +229,7 @@ int main() {
         printf("Choisir : ");
         scanf("%d", &quitter);
 
-        //system("cls");
+    //system("cls");
 
     } while ((operation > 0 || operation < 5) && (quitter != 1));
 

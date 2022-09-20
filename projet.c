@@ -4,6 +4,7 @@
 #include <math.h>
 #include <time.h>
 #include <string.h>
+#include <windows.h>
 
 
 typedef struct {
@@ -12,7 +13,13 @@ typedef struct {
     int quantite_Produit;
     float prix;
     float TTC;
-}Produit; 
+}Produit;
+
+typedef struct {
+    float prix_total_vendu;
+    float date;
+}statistique;
+
 
 void design(){
     printf("\t\t\t*****************************************************************\n");
@@ -41,6 +48,8 @@ void list_de_choix() {
     printf("\t\t\t*                                                               *\n");
     printf("\t\t\t*--- 8 --- Supprimer un produit.                                *\n");
     printf("\t\t\t*                                                               *\n");
+    printf("\t\t\t*--- 9 --- Statistique de vente.                                *\n");
+    printf("\t\t\t*                                                               *\n");
     printf("\t\t\t*--- 10 --- Quitter le programme.                               *\n");
     printf("\t\t\t*****************************************************************\n\n");
 }
@@ -50,6 +59,7 @@ int n = 0;
 int quantite;
 int code;
 Produit P[1000];
+statistique state[100];
 
 Produit swap;
 
@@ -112,6 +122,7 @@ void trier_Croissant_Alphabitique() {
         printf("\n");
     }
 }
+
 void trier_Decroissant_Prix() {
     for (i = 1; i < n; i++) {       // trier par ordre decroissant utilisont methode tri par insertion
         j = i;
@@ -168,6 +179,7 @@ void acheter_produit() {
     scanf("%d", &code);
     printf("* Entrer la quantite que tu besoin : ");
     scanf("%d", &quantite);
+
     for (i = 0; i < n; i++) {
         if (code == P[i].code_Product) {
             if (quantite > P[i].quantite_Produit) {
@@ -176,6 +188,8 @@ void acheter_produit() {
                 printf("* Sorry the quantite of this produit est epuise \n");
             } else {
                 P[i].quantite_Produit = P[i].quantite_Produit - quantite;
+                P[i].TTC = P[i].prix * quantite + ((P[i].prix * quantite) * 0.15);
+                state[i].prix_total_vendu = P[i].TTC;
                 printf("\n --> La Quantite de produit a ete bien mise a jour !!!! \n\n");
             }
             break;
@@ -272,6 +286,17 @@ void suppression_sroduit() {
     }
 }
 
+int prix_total_vente() {
+    
+}
+
+void statistique_vente() {
+    float somme = 0;
+    for (i = 0; i < n; i++) {
+        somme += state[i].prix_total_vendu;
+    }
+    printf("La somme de : %.2f \n", somme);
+}
 
 
 
@@ -311,6 +336,9 @@ int main() {
                 break;
             case 8 :
                 suppression_sroduit();
+                break;
+            case 9 :
+                statistique_vente();
                 break;
             default :
                 printf("\n* Desoler ce choix ya pas dans la list \n\n");

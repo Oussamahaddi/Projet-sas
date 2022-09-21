@@ -4,7 +4,7 @@
 #include <math.h>
 #include <time.h>
 #include <string.h>
-//#include <windows.h>
+#include <windows.h>
 
 
 typedef struct {
@@ -28,7 +28,9 @@ int i, j;
 int n = 0;
 int quantite;
 int code;
-int count = 0;
+int PV = 0;
+float somme = 0;
+int sommeQuantite = 0;
 
 Produit P[1000];
 statistique state[100];
@@ -177,6 +179,8 @@ void lister_produits() {
 }
 void acheter_produit() {
 
+    float prix_total_ttc;
+
     time_t tempe = time(NULL);
     struct tm date = *localtime(&tempe);
 
@@ -193,15 +197,15 @@ void acheter_produit() {
                 printf("* Sorry the quantite of this produit est epuise \n");
             } else {
                 P[i].quantite_Produit = P[i].quantite_Produit - quantite;
-                P[i].TTC = P[i].prix * quantite + ((P[i].prix * quantite) * 0.15);
-                state[i].prix_total_vendu = P[i].TTC;
+                prix_total_ttc = P[i].prix * quantite + ((P[i].prix * quantite) * 0.15);
+                state[i].prix_total_vendu = prix_total_ttc;
                 state[i].code_produit_vendu = P[i].code_Product;
                 state[i].quantite_vendu = quantite;
                 state[i].jour = date.tm_mday;
                 state[i].mois = date.tm_mon + 1;
                 state[i].annee = date.tm_year + 1900;
                 printf("\n --> La Quantite de produit a ete bien mise a jour !!!! \n\n");
-                count++;
+                PV++;
             }
             break;
         }
@@ -302,32 +306,86 @@ void suppression_sroduit() {
     }
 }
 
-int affiche_total_prix(int somme) {
-    somme = 0;
-    for (i = 0; i < count; i++) {       // problem
-        somme += state[i].prix_total_vendu;
-        printf("\n - Code Produit Acheter : %d \n", state[i].code_produit_vendu);
-        printf(" - Quantite Acheter : %d \n", state[i].quantite_vendu);
-        printf(" - Code Produit Acheter : %.2f \n\n", state[i].prix_total_vendu);
-        printf(" - Vendu en : %d/%d/%d \n", state[i].jour, state[i].mois, state[i].annee);
-        printf("-----------------------------------------------\n");
+void affiche_total_prix() {
+
+    float state_swap;
+
+    time_t tempe = time(NULL);
+    struct tm date = *localtime(&tempe);
+
+    for (i = 0; i < n; i++) {       // problem
+        if (state[i].jour == date.tm_mday && state[i].mois == date.tm_mon + 1 && state[i].annee == date.tm_year + 1900) {
+            somme += state[i].prix_total_vendu;
+            sommeQuantite += state[i].quantite_vendu;
+            printf("\n - Code Produit Acheter : %d \n", state[i].code_produit_vendu);
+            printf(" - Quantite Acheter : %d \n", state[i].quantite_vendu);
+            printf(" - Code Produit Acheter : %.2f \n", state[i].prix_total_vendu);
+            printf(" - Vendu en : %d/%d/%d \n\n", state[i].jour, state[i].mois, state[i].annee);
+            printf("---------------------------------------------------------------\n");
+        }
     }
     printf("--> Total des prix des produits vendus est : %.2f (en TTC).\n\n", somme);
-
-    return somme;
 }
-int affiche_moyenne_prix(){
+void affiche_moyenne_prix(float moyenne) {
+
+    moyenne = somme / sommeQuantite;
+
+    printf("\n* La moyenne des prix des produits vendus est : %.2f (en TTC). \n\n", moyenne);
 
 }
-int affiche_max_prix() {
+/*void tri_total_prix() {
 
+    time_t tempe = time(NULL);
+    struct tm date = *localtime(&tempe);
+
+    float state_swap;
+
+        for (i = 0; i < n; i++) {
+            j = i;
+            while (j > 0 && state[j].prix_total_vendu > state[j + 1].prix_total_vendu) {
+                state_swap = state[j].prix_total_vendu;
+                state[j].prix_total_vendu = state[j + 1].prix_total_vendu;
+                state[j + 1].prix_total_vendu = state_swap;
+                j--;
+            }
+        }
 }
-int affiche_min_prix() {
+*/
+void affiche_max_prix() {
 
+    time_t tempe = time(NULL);
+    struct tm date = *localtime(&tempe);
+
+    float max_prix_vendu = state[0].prix_total_vendu;
+    for (i = 0; i < n; i++) {       // problem
+        if (state[i].jour == date.tm_mday && state[i].mois == date.tm_mon + 1 && state[i].annee == date.tm_year + 1900) {
+            if (max_prix_vendu < state[i].prix_total_vendu)
+                max_prix_vendu = state[i].prix_total_vendu;
+        }
+    }
+    printf("--> Le Max des prix des produits vendu aujourd'hui : %.2f \n\n", max_prix_vendu);
+}
+void affiche_min_prix() {
+
+    time_t tempe = time(NULL);
+    struct tm date = *localtime(&tempe);
+
+    float min_prix_vendu = state[0].prix_total_vendu;
+
+    for (i = 0; i < n; i++) {       // problem
+        if (state[i].jour == date.tm_mday && state[i].mois == date.tm_mon + 1 && state[i].annee == date.tm_year + 1900) {
+            if (min_prix_vendu < state[i].prix_total_vendu)
+                min_prix_vendu = state[i].prix_total_vendu;
+        }
+    }
+    printf("--> Le Min des prix des produits vendu aujourd'hui : %.2f \n\n", min_prix_vendu);
 }
 
 void statistique_vente() {
-    float somme = 0;
+    float somme;
+    float moyenne;
+    float max;
+    float min;
     int chose;
 
     do {
@@ -341,10 +399,10 @@ void statistique_vente() {
 
         switch (chose) {
             case 1 :            
-                affiche_total_prix(somme);
+                affiche_total_prix();
                 break;
             case 2 :
-                affiche_moyenne_prix();
+                affiche_moyenne_prix(moyenne);
                 break;
             case 3 :
                 affiche_max_prix();
@@ -352,6 +410,8 @@ void statistique_vente() {
             case 4 :
                 affiche_min_prix();
                 break;
+            default :
+                printf("* Desole ya pas ce choix dans la liste \n\n.");
         }
     }while (chose != 0);
 }
@@ -363,6 +423,7 @@ int main() {
     int quitter;
 
     do {
+        
         design();
         list_de_choix();
 
